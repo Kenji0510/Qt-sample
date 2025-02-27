@@ -4,8 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/kenji/Qt/6.8.2/gcc_64/include/**",
-                "/home/kenji/Qt/6.8.2/gcc_64/lib/cmake"
+                // "/home/kenji/Qt/6.8.2/gcc_64/include/**",
+                "/usr/include/aarch64-linux-gnu/qt6/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent)
     connect(closeButton, &QPushButton::clicked, this, &QWidget::close);
 
     QLabel *imageLabel = new QLabel(this);
-    QPixmap image("/home/kenji/workspace/Cpp/Qt/qt_sample01/data/images/sample.png");
+    QPixmap image("../data/images/sample.png");
     imageLabel->setPixmap(image);
     layout->addWidget(imageLabel);
 }
