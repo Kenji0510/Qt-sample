@@ -17,4 +17,4 @@ private:
     QLabel *label;
 };
 
-#endif // SUBWINDOW_J
+#endif // SUBWINDOW_H
