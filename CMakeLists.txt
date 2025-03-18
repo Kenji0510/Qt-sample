@@ -18,6 +18,7 @@ src/main.cpp
 src/mainwindow.cpp 
 src/subwindow.cpp
 src/openglsample.cpp
+src/shadercode.cpp
 )
 
 # Qt6 をリンクする

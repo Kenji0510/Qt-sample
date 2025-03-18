@@ -14,6 +14,8 @@ public:
     ~OpenGLWindow();
 protected:
     void initializeGL() override;
+    void sendDataToOpenGL();
+    void installShaders();
     void paintGL() override;
     void resizeGL(int w, int h) override;
 };
