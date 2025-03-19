@@ -4,8 +4,13 @@
 #include <fstream>
 #include <QOpenGLWidget>
 
-extern const char* vertexShaderCode;
-extern const char* fragmentShaderCode;
+const float X_DELTA = 0.1f;
+const uint NUM_VERTICES_PER_TRI = 3;
+const uint NUM_FLOATS_PER_VERTICE = 6;
+const uint TRIANGLE_BYTE_SIZE = NUM_VERTICES_PER_TRI * NUM_FLOATS_PER_VERTICE * sizeof(float);
+const uint MAX_TRIS = 20;
+
+uint numTris = 0;
 
 OpenGLWindow::OpenGLWindow(QWidget *parent) : QOpenGLWidget(parent)
 {
@@ -70,28 +75,10 @@ void OpenGLWindow::installShaders()
 
 void OpenGLWindow::sendDataToOpenGL()
 {
-    const float RED_TRIANGLE_Z = 0.5f;
-    const float BLUE_TRIANGLE_Z = -0.5f;
-    GLfloat verts[] =
-    {
-        -1.0f, -1.0f, RED_TRIANGLE_Z,
-        +1.0f, +0.0f, +0.0f,
-        +0.0f, +1.0f, RED_TRIANGLE_Z,
-        +1.0f, +0.0f, +0.0f,
-        +1.0f, -1.0f, RED_TRIANGLE_Z,
-        +1.0f, +0.0f, +0.0f,
-
-        -1.0f, +1.0f, BLUE_TRIANGLE_Z,
-        +0.0f, +0.0f, +1.0f,
-        +0.0f, -1.0f, BLUE_TRIANGLE_Z,
-        +0.0f, +0.0f, +1.0f,
-        +1.0f, +1.0f, BLUE_TRIANGLE_Z,
-        +0.0f, +0.0f, +1.0f,
-    };
     GLuint vertexBufferID;
     glGenBuffers(1, &vertexBufferID);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MAX_TRIS * TRIANGLE_BYTE_SIZE, NULL, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
     glEnableVertexAttribArray(1);
@@ -104,13 +91,38 @@ void OpenGLWindow::sendDataToOpenGL()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
+void sendAnotherTripToOpenGL()
+{   
+    if (numTris == MAX_TRIS)
+        return;
+
+    const GLfloat THIS_TRI_X = -1 + numTris * X_DELTA;
+    GLfloat thisTri[] = 
+    {
+        THIS_TRI_X, 1.0f, 0.0f, 
+        1.0f, 0.0f, 0.0f,
+
+        THIS_TRI_X + X_DELTA, 1.0f, 0.0f, 
+        1.0f, 0.0f, 0.0f,
+
+        THIS_TRI_X, 0.0f, 0.0f, 
+        1.0f, 0.0f, 0.0f,
+    };
+
+    glBufferSubData(GL_ARRAY_BUFFER,
+        numTris * TRIANGLE_BYTE_SIZE, TRIANGLE_BYTE_SIZE, thisTri);
+    numTris++;
+}
+
 void OpenGLWindow::paintGL()
 {
     // glClear(GL_COLOR_BUFFER_BIT);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glViewport(0, 0, width(), height());
     // glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+    sendAnotherTripToOpenGL();
+    glDrawArrays(GL_TRIANGLES, 0, numTris * NUM_VERTICES_PER_TRI);
 }
 
 void OpenGLWindow::resizeGL(int w, int h)
